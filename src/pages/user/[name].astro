@@ -1,0 +1,57 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { normalizeLocale, t } from '@/i18n';
+
+const locale = normalizeLocale(Astro.currentLocale);
+
+/**
+ * 动态路由 /user/:name。
+ * 静态构建不产出该路由（生产部署需配置 SPA 回退或改用 SSR 适配器），
+ * 开发期提供示例参数以便预览。
+ */
+export function getStaticPaths() {
+  return import.meta.env.DEV ? [{ params: { name: 'demo' } }] : [];
+}
+
+const name = Astro.params.name ?? '';
+---
+
+<BaseLayout title={`${t(locale, 'user.title')} · ${name}`}>
+  <div class="mb-8 flex items-center gap-4">
+    <div
+      class="flex h-16 w-16 items-center justify-center rounded-full bg-slate-200 text-2xl font-bold text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+    >
+      {name.charAt(0).toUpperCase()}
+    </div>
+    <div>
+      <h1 class="text-2xl font-bold">{name}</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400">{t(locale, 'user.title')}</p>
+    </div>
+    <!-- 已登录且为本人时显示：新建集合按钮 -->
+    <button type="button" class="btn ml-auto" disabled>
+      {t(locale, 'user.newCollection')}
+    </button>
+  </div>
+
+  <!-- TODO: ABOUT.md 内容、静态部署页面跳转按钮 -->
+
+  <section>
+    <h2 class="mb-4 border-l-4 border-indigo-600 pl-3 text-xl font-semibold">
+      {t(locale, 'user.projects')}
+    </h2>
+    <div class="flex flex-col gap-6" data-component="project-collections">
+      <!-- TODO: 用户全部固定前缀仓库，每仓库最近 3 个工程稿件 + 更多按钮 + star 数 -->
+      <p class="text-sm text-slate-400" data-role="placeholder">–</p>
+    </div>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="mb-4 border-l-4 border-indigo-600 pl-3 text-xl font-semibold">
+      {t(locale, 'user.articles')}
+    </h2>
+    <div class="flex flex-col gap-6" data-component="article-collections">
+      <!-- TODO: 包含专栏投稿的仓库，每仓库最近 3 个专栏稿件 + 更多按钮 -->
+      <p class="text-sm text-slate-400" data-role="placeholder">–</p>
+    </div>
+  </section>
+</BaseLayout>

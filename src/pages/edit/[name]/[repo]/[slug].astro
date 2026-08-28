@@ -1,0 +1,31 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { normalizeLocale, t } from '@/i18n';
+
+const locale = normalizeLocale(Astro.currentLocale);
+
+/**
+ * 动态路由 /edit/:name/:repo/:slug。
+ * 静态构建不产出该路由（生产部署需配置 SPA 回退或改用 SSR 适配器），
+ * 开发期提供示例参数以便预览。
+ */
+export function getStaticPaths() {
+  return import.meta.env.DEV
+    ? [{ params: { name: 'demo', repo: 'svp-demo', slug: '260815' } }]
+    : [];
+}
+
+const { name, repo, slug } = Astro.params;
+---
+
+<BaseLayout title={`${t(locale, 'edit.title')} · ${slug}`}>
+  <h1 class="mb-2 text-2xl font-bold">{t(locale, 'edit.title')}</h1>
+  <p class="mb-6 text-sm text-slate-500 dark:text-slate-400">
+    {name}/{repo}/{slug}
+  </p>
+
+  <!-- 编辑器骨架：与 /new 共用编辑器组件，仓库与 slug 不可编辑，类型显示为标签 -->
+  <div class="card max-w-3xl p-6 text-sm text-slate-400">
+    {t(locale, 'edit.title')} · TODO
+  </div>
+</BaseLayout>

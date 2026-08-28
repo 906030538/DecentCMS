@@ -1,0 +1,72 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { LICENSE_OPTIONS } from '@/config';
+import { normalizeLocale, t } from '@/i18n';
+
+const locale = normalizeLocale(Astro.currentLocale);
+---
+
+<BaseLayout title={t(locale, 'new.title')}>
+  <h1 class="mb-6 text-2xl font-bold">{t(locale, 'new.title')}</h1>
+
+  <!--
+    编辑器骨架：完整编辑器（平台选择、模板建仓、文件上传方案、附件、索引 PR）
+    按 DESIGN.md「编辑器」章节实现。
+  -->
+  <form class="card flex max-w-3xl flex-col gap-5 p-6" onsubmit="return false">
+    <div class="flex flex-wrap items-center gap-3">
+      <select class="input" data-field="repo" aria-label="repo">
+        <option value="">svp-…</option>
+      </select>
+      <input class="input" data-field="slug" placeholder="260828" />
+      <div class="flex overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700">
+        <button type="button" class="px-3 py-1.5 text-sm" data-field="type-project">
+          {t(locale, 'type.project')}
+        </button>
+        <button type="button" class="px-3 py-1.5 text-sm" data-field="type-article">
+          {t(locale, 'type.article')}
+        </button>
+      </div>
+      <input class="input flex-1" data-field="title" />
+    </div>
+
+    <div class="flex gap-4 text-sm" data-field="params">
+      <label class="flex items-center gap-1.5">
+        <input type="radio" name="params" value="with-params" checked />
+        {t(locale, 'params.with')}
+      </label>
+      <label class="flex items-center gap-1.5">
+        <input type="radio" name="params" value="tuned" />
+        {t(locale, 'params.tuned')}
+      </label>
+      <label class="flex items-center gap-1.5">
+        <input type="radio" name="params" value="no-params" />
+        {t(locale, 'params.none')}
+      </label>
+    </div>
+
+    <textarea
+      class="input min-h-48"
+      data-field="body"
+      placeholder="Markdown"></textarea>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <input class="input" data-field="tags" placeholder="tags ↵" />
+      <select class="input" data-field="license">
+        {
+          LICENSE_OPTIONS.map((option) => (
+            <option value={option.value}>
+              {option.labelKey ? t(locale, option.labelKey) : option.label}
+            </option>
+          ))
+        }
+      </select>
+      <input type="file" data-field="files" multiple />
+      <input type="file" data-field="attachments" multiple />
+    </div>
+
+    <div class="flex justify-end">
+      <button type="submit" class="btn btn-primary" disabled>{t(locale, 'new.title')}</button>
+    </div>
+  </form>
+</BaseLayout>

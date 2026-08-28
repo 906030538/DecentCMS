@@ -1,0 +1,28 @@
+---
+import { t } from '@/i18n';
+import type { Locale } from '@/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const filters = [
+  { key: 'track', labelKey: 'filter.track' },
+  { key: 'engine', labelKey: 'filter.engine' },
+  { key: 'voicebank', labelKey: 'filter.voicebank' },
+  { key: 'songLanguage', labelKey: 'filter.songLanguage' },
+];
+---
+
+<!-- 选项由客户端脚本从索引数据动态填充 -->
+<div class="flex flex-wrap gap-2" data-component="filters">
+  {
+    filters.map((f) => (
+      <select class="input text-sm" data-filter={f.key} aria-label={t(locale, f.labelKey)}>
+        <option value="">{t(locale, f.labelKey)}</option>
+      </select>
+    ))
+  }
+</div>

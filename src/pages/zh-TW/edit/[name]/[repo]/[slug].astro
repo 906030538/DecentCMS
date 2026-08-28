@@ -1,0 +1,12 @@
+---
+import PageRaw from '@/pages/edit/[name]/[repo]/[slug].astro';
+const Page = PageRaw as any;
+
+export function getStaticPaths() {
+  return import.meta.env.DEV
+    ? [{ params: { name: 'demo', repo: 'svp-demo', slug: '260815' } }]
+    : [];
+}
+---
+
+<Page />

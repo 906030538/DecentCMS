@@ -1,0 +1,215 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Pagination from '@/components/Pagination.astro';
+import { normalizeLocale, t } from '@/i18n';
+import mockIndex from '../../../public/mock/index.json';
+
+const locale = normalizeLocale(Astro.currentLocale);
+
+/**
+ * 动态路由 /view/:name/:repo 与 /view/:name/:repo/:slug，由客户端按段数区分：
+ * 2 段 = 集合详情，3 段 = 稿件详情。
+ * 演示期基于本地索引为每个集合与稿件生成示例路径，保证静态部署下可导航、可测试；
+ * 接入真实索引仓后需为任意路径配置 SPA 回退或改用 SSR 适配器。
+ */
+export function getStaticPaths() {
+  const paths = new Set<string>();
+  for (const user of mockIndex.users) paths.add(`${user.user}/${user.repo}`);
+  for (const sub of mockIndex.submissions) paths.add(`${sub.user}/${sub.repo}/${sub.slug}`);
+  return Array.from(paths).map((path) => ({ params: { path } }));
+}
+
+const segments = (Astro.params.path ?? '').split('/').filter(Boolean);
+const [userName, repoName, slug] = segments;
+const isDetail = segments.length >= 3;
+
+const cardLabels = {
+  paramsWith: t(locale, 'params.with'),
+  paramsTuned: t(locale, 'params.tuned'),
+  paramsNone: t(locale, 'params.none'),
+};
+
+const collectionLabels = {
+  ...cardLabels,
+  submit: t(locale, 'collection.submit'),
+  edit: t(locale, 'collection.edit'),
+  delete: t(locale, 'collection.delete'),
+  save: t(locale, 'collection.save'),
+  cancel: t(locale, 'common.cancel'),
+  deleteConfirmText: t(locale, 'collection.deleteConfirmText'),
+  license: t(locale, 'label.license'),
+  stars: t(locale, 'label.stars'),
+  user: t(locale, 'label.user'),
+};
+
+const detailLabels = {
+  ...cardLabels,
+  date: t(locale, 'label.date'),
+  tracks: t(locale, 'label.tracks'),
+  engines: t(locale, 'label.engines'),
+  voicebanks: t(locale, 'label.voicebanks'),
+  songLanguages: t(locale, 'label.songLanguages'),
+  media: t(locale, 'detail.media'),
+  files: t(locale, 'detail.files'),
+  release: t(locale, 'detail.release'),
+  comments: t(locale, 'detail.comments'),
+  download: t(locale, 'detail.download'),
+  decrypt: t(locale, 'detail.decrypt'),
+  password: t(locale, 'detail.password'),
+  encrypted: t(locale, 'detail.encrypted'),
+  compressed: t(locale, 'detail.compressed'),
+  attachments: t(locale, 'detail.attachments'),
+  interactions: t(locale, 'detail.interactions'),
+  loadError: t(locale, 'detail.loadError'),
+  license: t(locale, 'label.license'),
+  stars: t(locale, 'label.stars'),
+};
+---
+
+<BaseLayout title={isDetail ? `${slug} · ${repoName}` : repoName ?? ''}>
+  {
+    isDetail ? (
+      /* 稿件详情页骨架：客户端按索引/内容仓数据填充 */
+      <article class="mx-auto max-w-3xl">
+        <header>
+          <h1 class="text-3xl font-bold" data-role="title">
+            {slug}
+          </h1>
+          <p class="mt-2 text-sm text-slate-500 dark:text-slate-400" data-role="date">–</p>
+          <div class="mt-4" data-role="meta"></div>
+        </header>
+
+        <section class="prose-svp mt-8" data-role="body"></section>
+
+        <div class="mt-6 flex flex-wrap gap-2" data-role="tags"></div>
+
+        <section class="mt-8">
+          <h2 class="mb-3 text-lg font-semibold">{t(locale, 'detail.media')}</h2>
+          <div data-role="media"></div>
+        </section>
+
+        <section class="card mt-8 flex items-center gap-3 p-4" data-role="author">
+          <span class="text-sm text-slate-400">
+            {userName}/{repoName}
+          </span>
+        </section>
+
+        <section class="mt-8">
+          <h2 class="mb-3 text-lg font-semibold">{t(locale, 'detail.files')}</h2>
+          <div data-role="files"></div>
+        </section>
+
+        <section class="mt-8">
+          <h2 class="mb-3 text-lg font-semibold">{t(locale, 'detail.release')}</h2>
+          <div data-role="release"></div>
+        </section>
+
+        <section class="mt-8">
+          <h2 class="mb-3 text-lg font-semibold">{t(locale, 'detail.comments')}</h2>
+          <div data-role="issues"></div>
+        </section>
+      </article>
+    ) : (
+      /* 集合详情页骨架 */
+      <div>
+        <header class="mb-6">
+          <div class="flex flex-wrap items-center gap-3">
+            <h1 class="text-2xl font-bold" data-role="repo-name">
+              {repoName}
+            </h1>
+            <div class="ml-auto flex gap-2" data-role="actions"></div>
+          </div>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400" data-role="repo-meta">
+            {t(locale, 'label.user')}: {userName}
+          </p>
+        </header>
+
+        <div class="mb-4 flex gap-2" data-role="tabs">
+          <button type="button" class="btn btn-primary" data-tab="project">
+            {t(locale, 'type.project')}
+          </button>
+          <button type="button" class="btn" data-tab="article">
+            {t(locale, 'type.article')}
+          </button>
+        </div>
+
+        <div class="flex flex-col gap-3" data-component="list"></div>
+        <p class="py-8 text-center text-slate-400" data-role="empty" hidden>
+          {t(locale, 'common.noResults')}
+        </p>
+        <Pagination locale={locale} />
+      </div>
+    )
+  }
+
+  <script is:inline type="application/json" id="view-config" set:html={JSON.stringify({
+    user: userName,
+    repo: repoName,
+    slug: slug ?? null,
+    isDetail,
+  })} />
+  <script is:inline type="application/json" id="collection-labels" set:html={JSON.stringify(collectionLabels)} />
+  <script is:inline type="application/json" id="detail-labels" set:html={JSON.stringify(detailLabels)} />
+
+  <script>
+    import { initCollection, type CollectionLabels } from '@/lib/views/collection';
+    import { initDetail, type DetailLabels } from '@/lib/views/detail';
+
+    const config = JSON.parse(
+      document.getElementById('view-config')!.textContent!,
+    ) as { user: string; repo: string; slug: string | null; isDetail: boolean };
+    const locale = document.documentElement.lang;
+
+    try {
+      if (config.isDetail && config.slug) {
+        const labels = JSON.parse(
+          document.getElementById('detail-labels')!.textContent!,
+        ) as DetailLabels;
+        const pick = (role: string) =>
+          document.querySelector<HTMLElement>(`[data-role="${role}"]`)!;
+        await initDetail({
+          user: config.user,
+          repo: config.repo,
+          slug: config.slug,
+          locale,
+          labels,
+          els: {
+            title: pick('title'),
+            date: pick('date'),
+            meta: pick('meta'),
+            body: pick('body'),
+            tags: pick('tags'),
+            media: pick('media'),
+            author: pick('author'),
+            files: pick('files'),
+            release: pick('release'),
+            issues: pick('issues'),
+          },
+        });
+      } else {
+        const labels = JSON.parse(
+          document.getElementById('collection-labels')!.textContent!,
+        ) as CollectionLabels;
+        await initCollection({
+          user: config.user,
+          repo: config.repo,
+          locale,
+          labels,
+          els: {
+            repoName: document.querySelector('[data-role="repo-name"]')!,
+            meta: document.querySelector('[data-role="repo-meta"]')!,
+            actions: document.querySelector('[data-role="actions"]')!,
+            tabs: document.querySelector('[data-role="tabs"]')!,
+            list: document.querySelector('[data-component="list"]')!,
+            empty: document.querySelector<HTMLElement>('[data-role="empty"]')!,
+            pageInfo: document.querySelector('[data-role="page-info"]')!,
+            prev: document.querySelector<HTMLButtonElement>('[data-action="prev"]')!,
+            next: document.querySelector<HTMLButtonElement>('[data-action="next"]')!,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('[view] init failed:', error);
+    }
+  </script>
+</BaseLayout>

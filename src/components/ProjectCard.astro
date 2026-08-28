@@ -1,0 +1,85 @@
+---
+import { localePath, t } from '@/i18n';
+import type { Locale } from '@/i18n';
+import type { SubmissionEntry } from '@/types';
+
+interface Props {
+  entry: SubmissionEntry;
+  locale: Locale;
+  /** 专栏模式只显示标题、时间、用户名与封面 */
+  compact?: boolean;
+}
+
+const { entry, locale, compact = false } = Astro.props;
+const href = localePath(locale, `/view/${entry.user}/${entry.repo}/${entry.slug}`);
+const date = new Date(entry.date).toLocaleDateString(locale, {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+const paramsKey =
+  entry.params === 'with-params'
+    ? 'params.with'
+    : entry.params === 'tuned'
+      ? 'params.tuned'
+      : 'params.none';
+---
+
+<article class="card flex gap-4 p-4">
+  <a href={href} class="block w-32 shrink-0">
+    {
+      entry.cover?.startsWith('http') ? (
+        <img
+          src={entry.cover}
+          alt={entry.title}
+          class="aspect-video w-full rounded-lg object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div class="flex aspect-video w-full items-center justify-center rounded-lg bg-slate-100 text-2xl text-slate-300 dark:bg-slate-800 dark:text-slate-600">
+          ♪
+        </div>
+      )
+    }
+  </a>
+  <div class="min-w-0 flex-1">
+    <h3 class="truncate font-medium">
+      <a href={href} class="hover:text-indigo-600 dark:hover:text-indigo-400">
+        {entry.title}
+      </a>
+    </h3>
+    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+      <a
+        href={localePath(locale, `/user/${entry.user}`)}
+        class="hover:text-indigo-600 dark:hover:text-indigo-400"
+      >
+        {entry.user}
+      </a>
+      <span class="mx-1.5">·</span>
+      <time datetime={entry.date}>{date}</time>
+    </p>
+    {
+      !compact && (
+        <div class="mt-2 flex flex-wrap gap-1.5">
+          {(entry.tracks ?? []).map((v) => (
+            <span class="chip">♪ {v}</span>
+          ))}
+          {(entry.engines ?? []).map((v) => (
+            <span class="chip">{v}</span>
+          ))}
+          {(entry.voicebanks ?? []).map((v) => (
+            <span class="chip">{v}</span>
+          ))}
+          {(entry.songLanguages ?? []).map((v) => (
+            <span class="chip">{v}</span>
+          ))}
+          {entry.type === 'project' && (
+            <span class="chip font-medium text-indigo-600 dark:text-indigo-400">
+              {t(locale, paramsKey)}
+            </span>
+          )}
+        </div>
+      )
+    }
+  </div>
+</article>
