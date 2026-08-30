@@ -1,21 +1,32 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { buildEditorLabels, buildLicenseOptions } from '@/lib/editor/labels';
 import { normalizeLocale, t } from '@/i18n';
+import mockIndex from '../../../../../public/mock/index.json';
 
 const locale = normalizeLocale(Astro.currentLocale);
 
 /**
  * 动态路由 /edit/:name/:repo/:slug。
- * 静态构建不产出该路由（生产部署需配置 SPA 回退或改用 SSR 适配器），
- * 开发期提供示例参数以便预览。
+ * 演示期从 mock 索引派生静态路径（与 view 页一致）；
+ * 接入真实索引仓后需配置 SPA 回退或改用 SSR 适配器。
  */
 export function getStaticPaths() {
-  return import.meta.env.DEV
-    ? [{ params: { name: 'demo', repo: 'svp-demo', slug: '260815' } }]
-    : [];
+  return mockIndex.submissions.map((sub) => ({
+    params: { name: sub.user, repo: sub.repo, slug: sub.slug },
+  }));
 }
 
 const { name, repo, slug } = Astro.params;
+
+const editorConfig = {
+  mode: 'edit',
+  user: name,
+  repo,
+  slug,
+  licenseOptions: buildLicenseOptions(locale),
+};
+const editorLabels = buildEditorLabels(locale);
 ---
 
 <BaseLayout title={`${t(locale, 'edit.title')} · ${slug}`}>
@@ -24,8 +35,24 @@ const { name, repo, slug } = Astro.params;
     {name}/{repo}/{slug}
   </p>
 
-  <!-- 编辑器骨架：与 /new 共用编辑器组件，仓库与 slug 不可编辑，类型显示为标签 -->
-  <div class="card max-w-3xl p-6 text-sm text-slate-400">
-    {t(locale, 'edit.title')} · TODO
-  </div>
+  <div data-role="editor-root"></div>
+
+  <script is:inline type="application/json" id="editor-config" set:html={JSON.stringify(editorConfig)} />
+  <script is:inline type="application/json" id="editor-labels" set:html={JSON.stringify(editorLabels)} />
+
+  <script>
+    import { initEditor, type EditorConfig, type EditorLabels } from '@/lib/views/editor';
+
+    try {
+      const config = JSON.parse(
+        document.getElementById('editor-config')!.textContent!,
+      ) as EditorConfig;
+      const labels = JSON.parse(
+        document.getElementById('editor-labels')!.textContent!,
+      ) as EditorLabels;
+      await initEditor(config, labels, document.querySelector('[data-role="editor-root"]')!);
+    } catch (error) {
+      console.error('[editor] init failed:', error);
+    }
+  </script>
 </BaseLayout>

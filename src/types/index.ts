@@ -104,6 +104,8 @@ export interface ReleaseInfo {
 }
 
 export interface ReleaseAsset {
+  /** 平台侧附件 id；mock 数据可缺省 */
+  id?: number;
   name: string;
   size: number;
   downloadUrl: string;

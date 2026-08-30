@@ -16,13 +16,24 @@ const filters = [
 ];
 ---
 
-<!-- 选项由客户端脚本从索引数据动态填充 -->
+<!-- 每个筛选器为可自定义输入的下拉框；候选项由客户端脚本从索引数据动态填充 -->
 <div class="flex flex-wrap gap-2" data-component="filters">
   {
     filters.map((f) => (
-      <select class="input text-sm" data-filter={f.key} aria-label={t(locale, f.labelKey)}>
-        <option value="">{t(locale, f.labelKey)}</option>
-      </select>
+      <div class="relative" data-filter-wrap={f.key}>
+        <input
+          type="text"
+          class="input w-40 text-sm"
+          data-filter={f.key}
+          placeholder={t(locale, f.labelKey)}
+          aria-label={t(locale, f.labelKey)}
+          autocomplete="off"
+        />
+        <div
+          class="absolute z-20 mt-1 hidden max-h-56 w-48 overflow-auto rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900"
+          data-role="filter-options"
+        ></div>
+      </div>
     ))
   }
 </div>

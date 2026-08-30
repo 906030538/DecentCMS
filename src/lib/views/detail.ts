@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { unzipSync, zipSync, strToU8 } from 'fflate';
-import { getAdapter } from '@/lib/adapters';
+import { getAdapterAsync } from '@/lib/adapters/lazy';
 import {
   isMockAvailable,
   loadRepoInfo,
@@ -11,7 +11,7 @@ import {
   type MediaItem,
   type ProjectFile,
 } from '@/lib/content';
-import { iterateAllSubmissions, loadMockIndex } from '@/lib/index/loader';
+import { findEntry } from '@/lib/index/loader';
 import { localePrefix } from '@/lib/ui';
 import type { IssueInfo, Platform, ReleaseInfo, SubmissionEntry } from '@/types';
 
@@ -60,24 +60,6 @@ export interface DetailInit {
   locale: string;
   labels: DetailLabels;
   els: DetailElements;
-}
-
-async function findEntry(
-  user: string,
-  repo: string,
-  slug: string,
-): Promise<SubmissionEntry | null> {
-  if (await isMockAvailable()) {
-    const index = await loadMockIndex();
-    return (
-      index.submissions.find((e) => e.user === user && e.repo === repo && e.slug === slug) ??
-      null
-    );
-  }
-  for await (const entry of iterateAllSubmissions(getAdapter('github'))) {
-    if (entry.user === user && entry.repo === repo && entry.slug === slug) return entry;
-  }
-  return null;
 }
 
 function renderTags(entry: SubmissionEntry, els: DetailElements): void {
@@ -171,7 +153,7 @@ async function downloadProjectFile(
   if (mock) {
     bytes = mockFileBytes(file);
   } else {
-    const url = getAdapter(platform).rawUrl(user, repo, `${slug}/${file.name}`);
+    const url = (await getAdapterAsync(platform)).rawUrl(user, repo, `${slug}/${file.name}`);
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     bytes = new Uint8Array(await response.arrayBuffer());

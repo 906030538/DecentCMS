@@ -64,9 +64,14 @@ const locale = normalizeLocale(Astro.currentLocale);
     const cancelBtn = document.querySelector<HTMLButtonElement>('[data-action="cancel"]')!;
     const searchInput = document.querySelector<HTMLInputElement>('[data-role="search-input"]')!;
     const searchBtn = document.querySelector<HTMLButtonElement>('[data-action="search"]')!;
-    const filterSelects = [
-      ...document.querySelectorAll<HTMLSelectElement>('[data-component="filters"] select'),
-    ];
+    const filterBoxes = [
+      ...document.querySelectorAll<HTMLElement>('[data-component="filters"] [data-filter-wrap]'),
+    ].map((box) => ({
+      box,
+      key: box.dataset.filterWrap!,
+      input: box.querySelector<HTMLInputElement>('input[data-filter]')!,
+      panel: box.querySelector<HTMLElement>('[data-role="filter-options"]')!,
+    }));
 
     let entries: SubmissionEntry[] = [];
     let filtered: SubmissionEntry[] = [];
@@ -76,33 +81,84 @@ const locale = normalizeLocale(Astro.currentLocale);
 
     function getFilters(): FilterState {
       const filters: FilterState = {};
-      for (const select of filterSelects) {
-        if (select.value) {
-          filters[select.dataset.filter as keyof FilterState] = select.value;
-        }
+      for (const { input } of filterBoxes) {
+        const value = input.value.trim();
+        if (value) filters[input.dataset.filter as keyof FilterState] = value;
       }
       return filters;
     }
 
+    /** 各筛选键的候选值，按出现次数降序（最常用的排前面） */
+    const candidates: Record<string, string[]> = {};
+
     function populateFilterOptions(): void {
-      const collect = (pick: (e: SubmissionEntry) => string[] | undefined) =>
-        [...new Set(entries.flatMap((e) => pick(e) ?? []))].sort();
-      const sources: Record<string, string[]> = {
-        track: collect((e) => e.tracks),
-        engine: collect((e) => e.engines),
-        voicebank: collect((e) => e.voicebanks),
-        songLanguage: collect((e) => e.songLanguages),
-      };
-      for (const select of filterSelects) {
-        const key = select.dataset.filter as keyof typeof sources;
-        for (const value of sources[key]) {
-          const option = document.createElement('option');
-          option.value = value;
-          option.textContent = value;
-          select.appendChild(option);
+      const collect = (pick: (e: SubmissionEntry) => string[] | undefined) => {
+        const counts = new Map<string, number>();
+        for (const e of entries) {
+          for (const value of pick(e) ?? []) counts.set(value, (counts.get(value) ?? 0) + 1);
         }
+        return [...counts.entries()]
+          .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+          .map(([value]) => value);
+      };
+      candidates.track = collect((e) => e.tracks);
+      candidates.engine = collect((e) => e.engines);
+      candidates.voicebank = collect((e) => e.voicebanks);
+      candidates.songLanguage = collect((e) => e.songLanguages);
+    }
+
+    function hidePanels(except?: HTMLElement): void {
+      for (const { panel } of filterBoxes) {
+        if (panel !== except) panel.classList.add('hidden');
       }
     }
+
+    /** 下拉候选：按已输入文本过滤，最多显示 10 条 */
+    function showOptions(key: string, input: HTMLInputElement, panel: HTMLElement): void {
+      const kw = input.value.trim().toLowerCase();
+      const list = (candidates[key] ?? [])
+        .filter((value) => !kw || value.toLowerCase().includes(kw))
+        .slice(0, 10);
+      panel.textContent = '';
+      if (!list.length) {
+        panel.classList.add('hidden');
+        return;
+      }
+      for (const value of list) {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className =
+          'block w-full px-3 py-1.5 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-800';
+        item.textContent = value;
+        item.addEventListener('click', () => {
+          input.value = value;
+          hidePanels();
+        });
+        panel.appendChild(item);
+      }
+      panel.classList.remove('hidden');
+      hidePanels(panel);
+    }
+
+    for (const { box, key, input, panel } of filterBoxes) {
+      input.addEventListener('focus', () => showOptions(key, input, panel));
+      input.addEventListener('input', () => showOptions(key, input, panel));
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          hidePanels();
+          searchBtn.click();
+        }
+      });
+      box.addEventListener('focusout', (event) => {
+        if (!box.contains(event.relatedTarget as Node)) panel.classList.add('hidden');
+      });
+    }
+    document.addEventListener('click', (event) => {
+      const target = event.target as Node;
+      for (const { box, panel } of filterBoxes) {
+        if (!box.contains(target)) panel.classList.add('hidden');
+      }
+    });
 
     function applyAndRender(): void {
       filtered = applyFilters(entries, getFilters());
@@ -140,7 +196,6 @@ const locale = normalizeLocale(Astro.currentLocale);
       page += 1;
       renderPage();
     });
-    for (const select of filterSelects) select.addEventListener('change', applyAndRender);
     searchBtn.addEventListener('click', () => {
       keyword = searchInput.value.trim();
       applyAndRender();

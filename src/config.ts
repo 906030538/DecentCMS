@@ -48,6 +48,16 @@ export const LICENSE_OPTIONS = [
 /** 内容仓正文头部固定标识 */
 export const POWERED_BY = 'Powered by Sector Vault Project';
 
+/** 编辑器约束：列表值/标签上限与单文件大小软提示阈值 */
+export const EDITOR_LIMITS = {
+  listValues: 10,
+  tags: 10,
+  fileSoftLimitBytes: 10 * 1024 * 1024,
+};
+
+/** 演示模式发布管线每步模拟耗时（毫秒） */
+export const MOCK_PIPELINE_STEP_DELAY = 200;
+
 /** 开发期使用的本地模拟索引 */
 export const MOCK_INDEX_URL = '/mock/index.json';
 

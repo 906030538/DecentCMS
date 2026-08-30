@@ -1,5 +1,5 @@
 import { LICENSE_OPTIONS, PAGE_SIZE } from '@/config';
-import { getAdapter } from '@/lib/adapters';
+import { getAdapterAsync } from '@/lib/adapters/lazy';
 import { isMockAvailable, loadEngagements, loadRepoInfo } from '@/lib/content';
 import { iterateAllSubmissions, loadMockIndex } from '@/lib/index/loader';
 import { loadSession } from '@/lib/auth';
@@ -46,7 +46,7 @@ async function loadRepoEntries(user: string, repo: string): Promise<SubmissionEn
   } else {
     const platform = 'github';
     all = [];
-    for await (const entry of iterateAllSubmissions(getAdapter(platform))) all.push(entry);
+    for await (const entry of iterateAllSubmissions(await getAdapterAsync(platform))) all.push(entry);
   }
   return all
     .filter((e) => e.user === user && e.repo === repo)

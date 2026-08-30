@@ -129,10 +129,12 @@ export class GiteeAdapter implements GitPlatformAdapter {
             path: { owner: user, repo, releaseId: r.id },
           });
           assets = ((attach.data ?? []) as Array<{
+            id?: number;
             name: string;
             size?: number;
             download_url?: string;
           }>).map((a) => ({
+            id: a.id,
             name: a.name,
             size: a.size ?? 0,
             downloadUrl: a.download_url ?? '',
@@ -193,6 +195,19 @@ export class GiteeAdapter implements GitPlatformAdapter {
     changes: FileChange[],
   ): Promise<void> {
     for (const change of changes) {
+      if (change.delete) {
+        const { data } = await getV5ReposOwnerRepoContentsPath({
+          path: { owner: user, repo, path: change.path },
+        });
+        const sha = (data as { sha?: string }).sha;
+        if (!sha) throw new Error(`Cannot resolve sha for ${change.path}`);
+        await client.delete({
+          url: '/v5/repos/{owner}/{repo}/contents/{path}',
+          path: { owner: user, repo, path: change.path },
+          body: { access_token: token, sha, message },
+        });
+        continue;
+      }
       await client.post({
         url: '/v5/repos/{owner}/{repo}/contents/{path}',
         path: { owner: user, repo, path: change.path },
@@ -256,6 +271,20 @@ export class GiteeAdapter implements GitPlatformAdapter {
     if (!response.ok) {
       throw new Error(`Upload release asset failed: ${response.status}`);
     }
+  }
+
+  async deleteReleaseAsset(
+    token: string,
+    user: string,
+    repo: string,
+    releaseId: number,
+    assetId: number,
+  ): Promise<void> {
+    await client.delete({
+      url: '/v5/repos/{owner}/{repo}/releases/{releaseId}/attach_files/{id}',
+      path: { owner: user, repo, releaseId, id: assetId },
+      body: { access_token: token },
+    });
   }
 
   async createRepoFromTemplate(token: string, owner: string, name: string): Promise<void> {

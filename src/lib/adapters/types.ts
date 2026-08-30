@@ -6,12 +6,13 @@ import type {
   RepoInfo,
 } from '@/types';
 
-/** 写入文件（新建或更新） */
+/** 写入文件（新建或更新）；delete 为真时删除该路径 */
 export interface FileChange {
   path: string;
-  /** 文件内容；字符串按 UTF-8 处理，或传 base64 */
+  /** 文件内容；字符串按 UTF-8 处理，或传 base64；delete 时忽略 */
   content: string;
   encoding?: 'utf-8' | 'base64';
+  delete?: boolean;
 }
 
 /**
@@ -82,6 +83,15 @@ export interface GitPlatformAdapter {
     releaseId: number,
     file: Blob,
     name: string,
+  ): Promise<void>;
+
+  /** 删除 release 附件 */
+  deleteReleaseAsset(
+    token: string,
+    user: string,
+    repo: string,
+    releaseId: number,
+    assetId: number,
   ): Promise<void>;
 
   /** 从模板仓库创建内容仓 */

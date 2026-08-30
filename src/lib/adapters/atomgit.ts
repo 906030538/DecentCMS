@@ -53,6 +53,9 @@ export class AtomGitAdapter implements GitPlatformAdapter {
   uploadReleaseAsset(): never {
     return this.unsupported();
   }
+  deleteReleaseAsset(): never {
+    return this.unsupported();
+  }
   createRepoFromTemplate(): never {
     return this.unsupported();
   }

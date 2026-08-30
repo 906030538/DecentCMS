@@ -1,6 +1,8 @@
 import { INDEX_REPO, MOCK_INDEX_URL } from '@/config';
 import type { FilterState, IndexFile, SubmissionEntry } from '@/types';
 import type { GitPlatformAdapter } from '@/lib/adapters/types';
+import { getAdapterAsync } from '@/lib/adapters/lazy';
+import { isMockAvailable } from '@/lib/content';
 
 /** 已加载索引缓存，避免重复请求（设计：缓存已加载的索引） */
 const indexCache = new Map<string, IndexFile>();
@@ -106,4 +108,23 @@ export async function loadMockIndex(): Promise<IndexFile> {
   const response = await fetch(MOCK_INDEX_URL);
   if (!response.ok) throw new Error(`Failed to load mock index: ${response.status}`);
   return (await response.json()) as IndexFile;
+}
+
+/** 按 user/repo/slug 定位索引条目（详情页与编辑页共用） */
+export async function findEntry(
+  user: string,
+  repo: string,
+  slug: string,
+): Promise<SubmissionEntry | null> {
+  if (await isMockAvailable()) {
+    const index = await loadMockIndex();
+    return (
+      index.submissions.find((e) => e.user === user && e.repo === repo && e.slug === slug) ??
+      null
+    );
+  }
+  for await (const entry of iterateAllSubmissions(await getAdapterAsync('github'))) {
+    if (entry.user === user && entry.repo === repo && entry.slug === slug) return entry;
+  }
+  return null;
 }

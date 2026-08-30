@@ -1,6 +1,6 @@
 import { MOCK_CONTENT_URL, POWERED_BY } from '@/config';
 import type { IssueInfo, Platform, ReleaseInfo, RepoInfo, SubmissionEntry } from '@/types';
-import { getAdapter } from '@/lib/adapters';
+import { getAdapterAsync } from '@/lib/adapters/lazy';
 import { fetchEngagementForEntries } from '@/lib/index/stats';
 import type { EngagementStats } from '@/types';
 
@@ -81,8 +81,12 @@ function slugKey(user: string, repo: string, slug: string): string {
 export function parseReadme(raw: string): ParsedReadme {
   const sections = raw.split(/^\s*---\s*$/m);
   const header = sections[0] ?? '';
-  const body = (sections[1] ?? '').trim();
-  const fileList = sections[2] ?? '';
+  // 正文可能包含独立的 --- 行：文件列表取最后一段，中间段重组成正文
+  const fileList = sections.length >= 3 ? (sections[sections.length - 1] ?? '') : '';
+  const body = sections
+    .slice(1, sections.length >= 3 ? -1 : sections.length)
+    .join('\n---\n')
+    .trim();
 
   const attrs: Record<string, string> = {};
   for (const line of header.split('\n')) {
@@ -108,6 +112,32 @@ export function parseReadme(raw: string): ParsedReadme {
   }
 
   return { attrs, body, files };
+}
+
+/** generateReadme 的输入；空值属性整行省略 */
+export interface ReadmeInput {
+  issue: number | string;
+  cover?: string;
+  license?: string;
+  /** 视频站链接，逗号连接写入 videos 属性 */
+  videos?: string[];
+  body: string;
+  files: ProjectFile[];
+}
+
+/** 生成编辑器格式的 README（与 parseReadme 严格互逆） */
+export function generateReadme(input: ReadmeInput): string {
+  const header = [`*${POWERED_BY}*`, `issue: ${input.issue}`];
+  if (input.cover) header.push(`cover: ${input.cover}`);
+  if (input.license) header.push(`license: ${input.license}`);
+  if (input.videos?.length) header.push(`videos: ${input.videos.join(', ')}`);
+
+  const fileList = input.files.map((f) => {
+    const stars = f.encrypted ? '**' : f.compressed ? '*' : '';
+    return `- ${stars}${f.name}`;
+  });
+
+  return [header.join('\n'), '', '---', '', input.body.trim(), '', '---', '', fileList.join('\n')].join('\n') + '\n';
 }
 
 const IMAGE_EXT = new Set(['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'avif']);
@@ -154,7 +184,7 @@ export async function loadRepoInfo(
       license: m.license,
     };
   }
-  return getAdapter(platform).getRepo(user, repo);
+  return (await getAdapterAsync(platform)).getRepo(user, repo);
 }
 
 async function loadReadme(platform: Platform, user: string, repo: string, slug: string): Promise<string> {
@@ -164,7 +194,7 @@ async function loadReadme(platform: Platform, user: string, repo: string, slug: 
     if (!raw) throw new Error(`README not found: ${slugKey(user, repo, slug)}`);
     return raw;
   }
-  return getAdapter(platform).readFile(user, repo, `${slug}/README.md`);
+  return (await getAdapterAsync(platform)).readFile(user, repo, `${slug}/README.md`);
 }
 
 async function loadSlugDir(platform: Platform, user: string, repo: string, slug: string): Promise<string[]> {
@@ -172,7 +202,7 @@ async function loadSlugDir(platform: Platform, user: string, repo: string, slug:
   if (mock) {
     return mock.dirs[slugKey(user, repo, slug)] ?? [];
   }
-  const entries = await getAdapter(platform).listDir(user, repo, slug);
+  const entries = await (await getAdapterAsync(platform)).listDir(user, repo, slug);
   return entries.filter((e) => e.type === 'file').map((e) => e.name);
 }
 
@@ -190,15 +220,17 @@ export async function loadSubmissionContent(
   ]);
   const parsed = parseReadme(raw);
   const projectNames = new Set(parsed.files.map((f) => f.name));
-  const adapter = getAdapter(platform);
 
   const media: MediaItem[] = dir
     .filter((name) => name !== 'README.md' && !projectNames.has(name))
     .map((name) => {
       const kind = mediaKind(name);
-      const url = mock ? mockMediaUrl(name, kind) : adapter.rawUrl(user, repo, `${slug}/${name}`);
-      return { name, kind, url };
+      return { name, kind, url: mock ? mockMediaUrl(name, kind) : '' };
     });
+  if (!mock) {
+    const adapter = await getAdapterAsync(platform);
+    for (const item of media) item.url = adapter.rawUrl(user, repo, `${slug}/${item.name}`);
+  }
 
   return { parsed, media };
 }
@@ -210,13 +242,13 @@ export async function loadReleases(
 ): Promise<ReleaseInfo[]> {
   const mock = await getMock();
   if (mock) return mock.releases[repoKey(user, repo)] ?? [];
-  return getAdapter(platform).listReleases(user, repo);
+  return (await getAdapterAsync(platform)).listReleases(user, repo);
 }
 
 export async function loadIssues(platform: Platform, user: string, repo: string): Promise<IssueInfo[]> {
   const mock = await getMock();
   if (mock) return mock.issues[repoKey(user, repo)] ?? [];
-  return getAdapter(platform).listIssues(user, repo);
+  return (await getAdapterAsync(platform)).listIssues(user, repo);
 }
 
 const engagementCache = new Map<string, EngagementStats>();
@@ -251,7 +283,7 @@ export async function loadEngagements(
     return results;
   }
 
-  const fromStats = await fetchEngagementForEntries(getAdapter(platform), entries);
+  const fromStats = await fetchEngagementForEntries(await getAdapterAsync(platform), entries);
   for (const entry of entries) {
     results.set(
       slugKey(entry.user, entry.repo, entry.slug),

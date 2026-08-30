@@ -14,7 +14,20 @@ export default defineConfig({
     },
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss(),
+      {
+        // 官方 preload-helper 使用 import.meta.resolve，happy-dom 无法编译；
+        // 换成透传实现（预加载仅是优化，省略不影响功能）
+        name: 'svp-simple-preload-helper',
+        enforce: 'pre',
+        load(id) {
+          if (id === '\0vite/preload-helper.js') {
+            return 'export const __vitePreload = (loader) => loader();';
+          }
+        },
+      },
+    ],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

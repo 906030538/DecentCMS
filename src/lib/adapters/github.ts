@@ -107,6 +107,7 @@ export class GitHubAdapter implements GitPlatformAdapter {
       htmlUrl: r.html_url,
       reactions: r.reactions?.total_count ?? 0,
       assets: r.assets.map((a) => ({
+        id: a.id,
         name: a.name,
         size: a.size,
         downloadUrl: a.browser_download_url,
@@ -164,6 +165,9 @@ export class GitHubAdapter implements GitPlatformAdapter {
 
     const tree = await Promise.all(
       changes.map(async (change) => {
+        if (change.delete) {
+          return { path: change.path, mode: '100644' as const, type: 'blob' as const, sha: null };
+        }
         const { data: blob } = await octokit.rest.git.createBlob({
           owner: user,
           repo,
@@ -254,6 +258,20 @@ export class GitHubAdapter implements GitPlatformAdapter {
     if (!response.ok) {
       throw new Error(`Upload release asset failed: ${response.status}`);
     }
+  }
+
+  async deleteReleaseAsset(
+    token: string,
+    user: string,
+    repo: string,
+    _releaseId: number,
+    assetId: number,
+  ): Promise<void> {
+    await client(token).rest.repos.deleteReleaseAsset({
+      owner: user,
+      repo,
+      asset_id: assetId,
+    });
   }
 
   async createRepoFromTemplate(
