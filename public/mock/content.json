@@ -11,6 +11,10 @@
     "mirai/svp-mirai": {
       "stars": 18,
       "license": "CC-BY-NC-4.0"
+    },
+    "demo/svp-demo-gitee": {
+      "stars": 3,
+      "license": "CC-BY-4.0"
     }
   },
   "readmes": {
@@ -28,7 +32,9 @@
     "mirai/svp-mirai/260628": "*Powered by Sector Vault Project*\nissue: 19\n\n---\n\n## UTAU oto.ini 制作笔记\n\n记录一次完整的 oto 配置过程：\n\n- 原音设定从辅音起点开始切；\n- 重叠区建议控制在 10~20ms；\n- 单独音与连续音分别校对。\n",
     "mirai/svp-mirai/260524": "*Powered by Sector Vault Project*\nissue: 18\ncover: cover.svg\n\n---\n\n## 銀河鉄道の夜\n\n合作曲目：Synthesizer V 段落由 *初音ミク AI* 演唱，UTAU 段落使用 *重音テト*，两版工程均已收录。\n",
     "mirai/svp-mirai/260415": "*Powered by Sector Vault Project*\nissue: 17\ncover: cover.svg\nlicense: CC-BY-4.0\n\n---\n\n## Echoes of Spring\n\nBilingual original (English & Chinese) featuring *星尘 Infinity*. Full parameter tuning included in the project file.\n",
-    "mirai/svp-mirai/260310": "*Powered by Sector Vault Project*\nissue: 16\ncover: cover.svg\n\n---\n\n## 紙ヒコーキ\n\nOpenUtau カバー、*重音テト* 使用。サビのピッチのみ手動で調整しています。\n"
+    "mirai/svp-mirai/260310": "*Powered by Sector Vault Project*\nissue: 16\ncover: cover.svg\n\n---\n\n## 紙ヒコーキ\n\nOpenUtau カバー、*重音テト* 使用。サビのピッチのみ手動で調整しています。\n",
+    "demo/svp-demo-gitee/260820": "*Powered by Sector Vault Project*\nissue: 21\ncover: stars.jpg\n\n---\n\n## 星轨漫游\n\n星际题材的 SynthV 工程，参数已完整调校。\n\n---\n\n- 星轨漫游.svp\n",
+    "demo/svp-demo-gitee/260812": "*Powered by Sector Vault Project*\nissue: 20\n\n---\n\n## 把内容仓迁移到 Gitee 的注意事项\n\n迁移索引、附件与静态部署时需要留意的几个细节。\n\n---\n"
   },
   "dirs": {
     "demo/svp-demo/260815": [
@@ -110,6 +116,14 @@
       "README.md",
       "cover.svg",
       "紙ヒコーキ.usproj"
+    ],
+    "demo/svp-demo-gitee/260820": [
+      "README.md",
+      "星轨漫游.svp",
+      "stars.jpg"
+    ],
+    "demo/svp-demo-gitee/260812": [
+      "README.md"
     ]
   },
   "releases": {
@@ -260,7 +274,18 @@
         "assets": []
       }
     ],
-    "demo/svp-notes": []
+    "demo/svp-notes": [],
+    "demo/svp-demo-gitee": [
+      {
+        "id": 31,
+        "tag": "260820",
+        "name": "260820",
+        "body": "https://sectorvault.example.com/view/demo/svp-demo-gitee/260820",
+        "htmlUrl": "https://gitee.com/demo/svp-demo-gitee/releases/260820",
+        "reactions": 2,
+        "assets": []
+      }
+    ]
   },
   "issues": {
     "demo/svp-demo": [
@@ -379,6 +404,18 @@
         "createdAt": "2026-03-10T16:20:00+09:00"
       }
     ],
-    "demo/svp-notes": []
+    "demo/svp-notes": [],
+    "demo/svp-demo-gitee": [
+      {
+        "number": 21,
+        "title": "星轨漫游",
+        "htmlUrl": "https://gitee.com/demo/svp-demo-gitee/issues/21",
+        "comments": 1,
+        "createdAt": "2026-08-20T20:00:00+08:00"
+      }
+    ]
+  },
+  "abouts": {
+    "demo/svp-demo": "# 关于 demo\n\n合成器 V 与 UTAU 爱好者，专注电子人声创作。\n本空间所有工程文件均可自由下载与二创。"
   }
 }

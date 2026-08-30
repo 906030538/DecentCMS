@@ -40,6 +40,7 @@ interface MockContent {
   dirs: Record<string, string[]>;
   releases: Record<string, ReleaseInfo[]>;
   issues: Record<string, IssueInfo[]>;
+  abouts?: Record<string, string>;
 }
 
 let mockCache: MockContent | null | undefined;
@@ -185,6 +186,21 @@ export async function loadRepoInfo(
     };
   }
   return (await getAdapterAsync(platform)).getRepo(user, repo);
+}
+
+/** 仓库根目录的个人介绍文件；不存在时返回 undefined */
+export async function loadAbout(
+  platform: Platform,
+  user: string,
+  repo: string,
+): Promise<string | undefined> {
+  const mock = await getMock();
+  if (mock) return mock.abouts?.[repoKey(user, repo)];
+  try {
+    return await (await getAdapterAsync(platform)).readFile(user, repo, 'ABOUT.md');
+  } catch {
+    return undefined;
+  }
 }
 
 async function loadReadme(platform: Platform, user: string, repo: string, slug: string): Promise<string> {

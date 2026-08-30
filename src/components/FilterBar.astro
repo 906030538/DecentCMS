@@ -1,6 +1,6 @@
 ---
 import { t } from '@/i18n';
-import type { Locale } from '@/i18n';
+import type { Locale, MessageKey } from '@/i18n';
 
 interface Props {
   locale: Locale;
@@ -8,7 +8,7 @@ interface Props {
 
 const { locale } = Astro.props;
 
-const filters = [
+const filters: { key: string; labelKey: MessageKey }[] = [
   { key: 'track', labelKey: 'filter.track' },
   { key: 'engine', labelKey: 'filter.engine' },
   { key: 'voicebank', labelKey: 'filter.voicebank' },

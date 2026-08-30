@@ -106,8 +106,8 @@ langInput.value = 'zh';
 langInput.dispatchEvent(
   new page.mainFrame.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
 );
-await waitFor(() => doc.querySelectorAll('[data-component="list"] > *').length === 7);
-assert('筛选框回车触发搜索（7 条中文）',
+await waitFor(() => doc.querySelectorAll('[data-component="list"] > *').length === 8);
+assert('筛选框回车触发搜索（8 条中文）',
   doc.querySelector('[data-role="page-info"]').textContent.includes('1 / 1'));
 
 const errors = page.virtualConsolePrinter

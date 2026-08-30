@@ -1,7 +1,7 @@
 ---
 import { SITE_NAME } from '@/config';
 import { localePath, t } from '@/i18n';
-import type { Locale } from '@/i18n';
+import type { Locale, MessageKey } from '@/i18n';
 import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 import ThemeToggle from '@/components/ThemeToggle.astro';
 
@@ -12,7 +12,7 @@ interface Props {
 const { locale } = Astro.props;
 const path = Astro.url.pathname;
 
-const navItems = [
+const navItems: { key: MessageKey; href: string }[] = [
   { key: 'nav.projects', href: localePath(locale, '/project') },
   { key: 'nav.articles', href: localePath(locale, '/article') },
   { key: 'nav.discussions', href: localePath(locale, '/discussions') },
@@ -23,6 +23,22 @@ const navItems = [
 function isActive(href: string): boolean {
   return path === href || path.startsWith(`${href}/`);
 }
+
+const authLabels = {
+  title: t(locale, 'auth.title'),
+  intro: t(locale, 'auth.intro'),
+  platform: t(locale, 'editor.platform'),
+  stepRegister: t(locale, 'auth.stepRegister'),
+  stepToken: t(locale, 'auth.stepToken'),
+  stepVerify: t(locale, 'auth.stepVerify'),
+  register: t(locale, 'auth.register'),
+  tokenPage: t(locale, 'auth.tokenPage'),
+  tokenPh: t(locale, 'editor.tokenPh'),
+  tokenSave: t(locale, 'editor.tokenSave'),
+  tokenBad: t(locale, 'editor.tokenBad'),
+  demoHint: t(locale, 'auth.demoHint'),
+  cancel: t(locale, 'common.cancel'),
+};
 ---
 
 <header
@@ -64,11 +80,17 @@ function isActive(href: string): boolean {
       </div>
     </div>
   </div>
+  <script is:inline type="application/json" id="auth-labels" set:html={JSON.stringify(authLabels)} />
 </header>
 
 <script>
+  import { openAuthDialog, type AuthLabels } from '@/lib/auth-dialog';
+
   // 已登录时以头像 + 用户名替换登录按钮（登录态保存在 localStorage）
   const area = document.getElementById('user-area');
+  const labels = JSON.parse(
+    document.getElementById('auth-labels')!.textContent!,
+  ) as AuthLabels;
   if (area) {
     try {
       const raw = localStorage.getItem('svp-session');
@@ -90,6 +112,12 @@ function isActive(href: string): boolean {
       }
     } catch {
       /* 忽略损坏的会话数据 */
+    }
+    const loginBtn = area.querySelector('button');
+    if (loginBtn) {
+      loginBtn.addEventListener('click', () => {
+        void openAuthDialog(labels);
+      });
     }
   }
 </script>

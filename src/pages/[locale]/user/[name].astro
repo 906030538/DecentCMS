@@ -1,0 +1,17 @@
+---
+import PageRaw from '@/pages/user/[name].astro';
+import { NON_DEFAULT_LOCALES } from '@/i18n';
+import { userStaticPaths } from '@/lib/paths';
+
+const Page = PageRaw as any;
+
+export function getStaticPaths() {
+  const paths: { params: { locale: string; name: string } }[] = [];
+  for (const locale of NON_DEFAULT_LOCALES) {
+    for (const { params } of userStaticPaths()) paths.push({ params: { locale, ...params } });
+  }
+  return paths;
+}
+---
+
+<Page />

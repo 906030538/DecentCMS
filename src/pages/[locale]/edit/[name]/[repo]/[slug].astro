@@ -1,0 +1,19 @@
+---
+import PageRaw from '@/pages/edit/[name]/[repo]/[slug].astro';
+import { NON_DEFAULT_LOCALES } from '@/i18n';
+import mockIndex from '../../../../../../public/mock/index.json';
+
+const Page = PageRaw as any;
+
+export function getStaticPaths() {
+  const list: { params: { locale: string; name: string; repo: string; slug: string } }[] = [];
+  for (const locale of NON_DEFAULT_LOCALES) {
+    for (const sub of mockIndex.submissions) {
+      list.push({ params: { locale, name: sub.user, repo: sub.repo, slug: sub.slug } });
+    }
+  }
+  return list;
+}
+---
+
+<Page />

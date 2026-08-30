@@ -1,8 +1,26 @@
 {
   "users": [
-    { "user": "demo", "platform": "github", "repo": "svp-demo" },
-    { "user": "demo", "platform": "github", "repo": "svp-notes" },
-    { "user": "mirai", "platform": "gitee", "repo": "svp-mirai", "site": "https://mirai.example.com" }
+    {
+      "user": "demo",
+      "platform": "github",
+      "repo": "svp-demo"
+    },
+    {
+      "user": "demo",
+      "platform": "github",
+      "repo": "svp-notes"
+    },
+    {
+      "user": "mirai",
+      "platform": "gitee",
+      "repo": "svp-mirai",
+      "site": "https://mirai.example.com"
+    },
+    {
+      "user": "demo",
+      "platform": "gitee",
+      "repo": "svp-demo-gitee"
+    }
   ],
   "submissions": [
     {
@@ -13,12 +31,23 @@
       "type": "project",
       "title": "夜航星群",
       "date": "2026-08-15T10:00:00+08:00",
-      "tracks": ["夜航星群"],
-      "engines": ["Synthesizer V Studio Pro"],
-      "voicebanks": ["星尘 Infinity"],
-      "songLanguages": ["zh"],
+      "tracks": [
+        "夜航星群"
+      ],
+      "engines": [
+        "Synthesizer V Studio Pro"
+      ],
+      "voicebanks": [
+        "星尘 Infinity"
+      ],
+      "songLanguages": [
+        "zh"
+      ],
       "params": "with-params",
-      "tags": ["原创", "电子"]
+      "tags": [
+        "原创",
+        "电子"
+      ]
     },
     {
       "slug": "260809",
@@ -28,12 +57,23 @@
       "type": "project",
       "title": "夏の終わりの海",
       "date": "2026-08-09T18:30:00+09:00",
-      "tracks": ["夏の終わりの海"],
-      "engines": ["Synthesizer V Studio Pro"],
-      "voicebanks": ["初音ミク AI"],
-      "songLanguages": ["ja"],
+      "tracks": [
+        "夏の終わりの海"
+      ],
+      "engines": [
+        "Synthesizer V Studio Pro"
+      ],
+      "voicebanks": [
+        "初音ミク AI"
+      ],
+      "songLanguages": [
+        "ja"
+      ],
       "params": "tuned",
-      "tags": ["カバー"]
+      "tags": [
+        "カバー"
+      ],
+      "cover": "umi.jpg"
     },
     {
       "slug": "260802",
@@ -43,7 +83,9 @@
       "type": "article",
       "title": "Synthesizer V 参数调校入门指南",
       "date": "2026-08-02T09:00:00+08:00",
-      "tags": ["教程"]
+      "tags": [
+        "教程"
+      ]
     },
     {
       "slug": "260726",
@@ -53,12 +95,23 @@
       "type": "project",
       "title": "失重城市",
       "date": "2026-07-26T20:00:00+08:00",
-      "tracks": ["失重城市"],
-      "engines": ["ACE Studio"],
-      "voicebanks": ["洛天依"],
-      "songLanguages": ["zh"],
+      "tracks": [
+        "失重城市"
+      ],
+      "engines": [
+        "ACE Studio"
+      ],
+      "voicebanks": [
+        "洛天依"
+      ],
+      "songLanguages": [
+        "zh"
+      ],
       "params": "with-params",
-      "tags": ["原创"]
+      "tags": [
+        "原创"
+      ],
+      "cover": "cover.jpg"
     },
     {
       "slug": "260718",
@@ -68,12 +121,22 @@
       "type": "project",
       "title": "Glassy Melody",
       "date": "2026-07-18T12:00:00+09:00",
-      "tracks": ["Glassy Melody"],
-      "engines": ["OpenUtau"],
-      "voicebanks": ["闇音レンリ"],
-      "songLanguages": ["en"],
+      "tracks": [
+        "Glassy Melody"
+      ],
+      "engines": [
+        "OpenUtau"
+      ],
+      "voicebanks": [
+        "闇音レンリ"
+      ],
+      "songLanguages": [
+        "en"
+      ],
       "params": "no-params",
-      "tags": ["original"]
+      "tags": [
+        "original"
+      ]
     },
     {
       "slug": "260710",
@@ -83,12 +146,24 @@
       "type": "project",
       "title": "纸飞机",
       "date": "2026-07-10T15:20:00+08:00",
-      "tracks": ["纸飞机"],
-      "engines": ["UTAU"],
-      "voicebanks": ["重音テト"],
-      "songLanguages": ["ja", "zh"],
+      "tracks": [
+        "纸飞机"
+      ],
+      "engines": [
+        "UTAU"
+      ],
+      "voicebanks": [
+        "重音テト"
+      ],
+      "songLanguages": [
+        "ja",
+        "zh"
+      ],
       "params": "tuned",
-      "tags": ["翻调"]
+      "tags": [
+        "翻调"
+      ],
+      "cover": "paper-plane.png"
     },
     {
       "slug": "260628",
@@ -98,7 +173,9 @@
       "type": "article",
       "title": "UTAU  oto.ini 制作笔记",
       "date": "2026-06-28T21:00:00+09:00",
-      "tags": ["教程"]
+      "tags": [
+        "教程"
+      ]
     },
     {
       "slug": "260620",
@@ -108,12 +185,23 @@
       "type": "project",
       "title": "晨雾信号",
       "date": "2026-06-20T08:40:00+08:00",
-      "tracks": ["晨雾信号"],
-      "engines": ["Synthesizer V Studio Pro"],
-      "voicebanks": ["诗岸"],
-      "songLanguages": ["zh"],
+      "tracks": [
+        "晨雾信号"
+      ],
+      "engines": [
+        "Synthesizer V Studio Pro"
+      ],
+      "voicebanks": [
+        "诗岸"
+      ],
+      "songLanguages": [
+        "zh"
+      ],
       "params": "with-params",
-      "tags": ["原创", "氛围"]
+      "tags": [
+        "原创",
+        "氛围"
+      ]
     },
     {
       "slug": "260606",
@@ -123,12 +211,23 @@
       "type": "project",
       "title": "Rainy Station",
       "date": "2026-06-06T19:10:00+08:00",
-      "tracks": ["Rainy Station"],
-      "engines": ["OpenUtau"],
-      "voicebanks": ["IA"],
-      "songLanguages": ["en"],
+      "tracks": [
+        "Rainy Station"
+      ],
+      "engines": [
+        "OpenUtau"
+      ],
+      "voicebanks": [
+        "IA"
+      ],
+      "songLanguages": [
+        "en"
+      ],
       "params": "no-params",
-      "tags": ["original", "lofi"]
+      "tags": [
+        "original",
+        "lofi"
+      ]
     },
     {
       "slug": "260524",
@@ -138,12 +237,25 @@
       "type": "project",
       "title": "銀河鉄道の夜",
       "date": "2026-05-24T17:00:00+09:00",
-      "tracks": ["銀河鉄道の夜"],
-      "engines": ["Synthesizer V Studio Pro", "UTAU"],
-      "voicebanks": ["初音ミク AI", "重音テト"],
-      "songLanguages": ["ja"],
+      "tracks": [
+        "銀河鉄道の夜"
+      ],
+      "engines": [
+        "Synthesizer V Studio Pro",
+        "UTAU"
+      ],
+      "voicebanks": [
+        "初音ミク AI",
+        "重音テト"
+      ],
+      "songLanguages": [
+        "ja"
+      ],
       "params": "with-params",
-      "tags": ["コラボ"]
+      "tags": [
+        "コラボ"
+      ],
+      "cover": "ginga.jpg"
     },
     {
       "slug": "260512",
@@ -153,7 +265,10 @@
       "type": "article",
       "title": "如何用 Git 管理自己的工程仓库",
       "date": "2026-05-12T10:30:00+08:00",
-      "tags": ["教程", "工作流"]
+      "tags": [
+        "教程",
+        "工作流"
+      ]
     },
     {
       "slug": "260430",
@@ -163,12 +278,23 @@
       "type": "project",
       "title": "电子蝴蝶",
       "date": "2026-04-30T14:00:00+08:00",
-      "tracks": ["电子蝴蝶"],
-      "engines": ["ACE Studio"],
-      "voicebanks": ["乐正绫"],
-      "songLanguages": ["zh"],
+      "tracks": [
+        "电子蝴蝶"
+      ],
+      "engines": [
+        "ACE Studio"
+      ],
+      "voicebanks": [
+        "乐正绫"
+      ],
+      "songLanguages": [
+        "zh"
+      ],
       "params": "tuned",
-      "tags": ["原创", "电子"]
+      "tags": [
+        "原创",
+        "电子"
+      ]
     },
     {
       "slug": "260415",
@@ -178,12 +304,23 @@
       "type": "project",
       "title": "Echoes of Spring",
       "date": "2026-04-15T11:45:00+09:00",
-      "tracks": ["Echoes of Spring"],
-      "engines": ["Synthesizer V Studio Pro"],
-      "voicebanks": ["星尘 Infinity"],
-      "songLanguages": ["en", "zh"],
+      "tracks": [
+        "Echoes of Spring"
+      ],
+      "engines": [
+        "Synthesizer V Studio Pro"
+      ],
+      "voicebanks": [
+        "星尘 Infinity"
+      ],
+      "songLanguages": [
+        "en",
+        "zh"
+      ],
       "params": "with-params",
-      "tags": ["original"]
+      "tags": [
+        "original"
+      ]
     },
     {
       "slug": "260328",
@@ -193,12 +330,22 @@
       "type": "project",
       "title": "无声电台",
       "date": "2026-03-28T22:15:00+08:00",
-      "tracks": ["无声电台"],
-      "engines": ["UTAU"],
-      "voicebanks": ["闇音レンリ"],
-      "songLanguages": ["zh"],
+      "tracks": [
+        "无声电台"
+      ],
+      "engines": [
+        "UTAU"
+      ],
+      "voicebanks": [
+        "闇音レンリ"
+      ],
+      "songLanguages": [
+        "zh"
+      ],
       "params": "no-params",
-      "tags": ["翻调"]
+      "tags": [
+        "翻调"
+      ]
     },
     {
       "slug": "260310",
@@ -208,12 +355,54 @@
       "type": "project",
       "title": "紙ヒコーキ",
       "date": "2026-03-10T16:20:00+09:00",
-      "tracks": ["紙ヒコーキ"],
-      "engines": ["OpenUtau"],
-      "voicebanks": ["重音テト"],
-      "songLanguages": ["ja"],
+      "tracks": [
+        "紙ヒコーキ"
+      ],
+      "engines": [
+        "OpenUtau"
+      ],
+      "voicebanks": [
+        "重音テト"
+      ],
+      "songLanguages": [
+        "ja"
+      ],
       "params": "tuned",
-      "tags": ["カバー"]
+      "tags": [
+        "カバー"
+      ]
+    },
+    {
+      "slug": "260820",
+      "user": "demo",
+      "repo": "svp-demo-gitee",
+      "platform": "gitee",
+      "type": "project",
+      "title": "星轨漫游",
+      "date": "2026-08-20T20:00:00+08:00",
+      "cover": "stars.jpg",
+      "params": "with-params",
+      "tracks": [
+        "星轨漫游"
+      ],
+      "engines": [
+        "Synthesizer V Studio Pro"
+      ],
+      "voicebanks": [
+        "星尘 Infinity"
+      ],
+      "songLanguages": [
+        "zh"
+      ]
+    },
+    {
+      "slug": "260812",
+      "user": "demo",
+      "repo": "svp-demo-gitee",
+      "platform": "gitee",
+      "type": "article",
+      "title": "把内容仓迁移到 Gitee 的注意事项",
+      "date": "2026-08-12T10:00:00+08:00"
     }
   ]
 }

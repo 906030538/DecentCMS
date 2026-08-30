@@ -76,7 +76,7 @@ console.log('\n[new] 表单结构与校验');
 
   const repoSelect = doc.querySelector('[data-field="repo"]');
   const optionTexts = Array.from(repoSelect.options).map((o) => o.text);
-  assert('repo 下拉含 3 个演示仓库', optionTexts.length === 3 && optionTexts.includes('demo/svp-demo'));
+  assert('repo 下拉含 4 个演示仓库', optionTexts.length === 4 && optionTexts.includes('demo/svp-demo'));
 
   const slugInput = doc.querySelector('[data-field="slug"]');
   assert('slug 默认今日 6 位日期', slugInput.value === todaySlug());

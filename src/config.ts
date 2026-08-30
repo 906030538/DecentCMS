@@ -1,7 +1,7 @@
 import type { Platform } from './types';
+import type { MessageKey } from './i18n';
 
 export const SITE_NAME = 'Sector Vault';
-export const SITE_TAGLINE_KEY = 'home.tagline';
 
 /** 内容仓固定前缀，可通过部署配置覆盖 */
 export const CONTENT_REPO_PREFIX = 'svp-';
@@ -34,7 +34,7 @@ export const MAIN_REPO = {
 export const SUPPORTED_PLATFORMS: Platform[] = ['github', 'gitee', 'atomgit'];
 
 /** 默认许可证选项：CC0、CC4.0（含细分系列） */
-export const LICENSE_OPTIONS = [
+export const LICENSE_OPTIONS: { value: string; label?: string; labelKey?: MessageKey }[] = [
   { value: '', labelKey: 'editor.licenseRepoDefault' },
   { value: 'CC0-1.0', label: 'CC0 1.0' },
   { value: 'CC-BY-4.0', label: 'CC BY 4.0' },
@@ -44,6 +44,12 @@ export const LICENSE_OPTIONS = [
   { value: 'CC-BY-ND-4.0', label: 'CC BY-ND 4.0' },
   { value: 'CC-BY-NC-ND-4.0', label: 'CC BY-NC-ND 4.0' },
 ];
+
+/** 各平台可用的内容仓模板库（主站点静态部署配置） */
+export const REPO_TEMPLATES: Partial<Record<Platform, { owner: string; repo: string }[]>> = {
+  github: [{ owner: 'SectorVault', repo: 'svp-template' }],
+  gitee: [{ owner: 'SectorVault', repo: 'svp-template' }],
+};
 
 /** 内容仓正文头部固定标识 */
 export const POWERED_BY = 'Powered by Sector Vault Project';
