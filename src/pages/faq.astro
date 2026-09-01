@@ -1,15 +1,17 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { MAIN_REPO } from '@/config';
-import { normalizeLocale, t } from '@/i18n';
+import { DEFAULT_LOCALE, t } from '@/i18n';
 
-const locale = normalizeLocale(Astro.currentLocale);
+const locale = DEFAULT_LOCALE;
 const wikiUrl = `https://github.com/${MAIN_REPO.owner}/${MAIN_REPO.name}/wiki`;
 ---
 
-<BaseLayout title={t(locale, 'faq.title')}>
-  <h1 class="mb-6 text-2xl font-bold">{t(locale, 'faq.title')}</h1>
-  <p class="mb-4 text-slate-500 dark:text-slate-400">{t(locale, 'faq.description')}</p>
+<BaseLayout titleKey="faq.title">
+  <h1 class="mb-6 text-2xl font-bold" data-i18n="faq.title">{t(locale, 'faq.title')}</h1>
+  <p class="mb-4 text-slate-500 dark:text-slate-400" data-i18n="faq.description">
+    {t(locale, 'faq.description')}
+  </p>
   <div class="card p-8">
     <!-- TODO: 从主站点仓库 wiki 拉取页面并渲染（默认显示 Home 页） -->
     <p class="text-center text-slate-400">

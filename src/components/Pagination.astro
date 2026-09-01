@@ -11,10 +11,10 @@ const { locale } = Astro.props;
 
 <nav class="flex items-center justify-center gap-3 py-4" data-component="pagination">
   <button type="button" class="btn" data-action="prev" disabled>
-    ← {t(locale, 'common.prevPage')}
+    ← <span data-i18n="common.prevPage">{t(locale, 'common.prevPage')}</span>
   </button>
   <span class="text-sm text-slate-500 dark:text-slate-400" data-role="page-info">1 / 1</span>
   <button type="button" class="btn" data-action="next" disabled>
-    {t(locale, 'common.nextPage')} →
+    <span data-i18n="common.nextPage">{t(locale, 'common.nextPage')}</span> →
   </button>
 </nav>

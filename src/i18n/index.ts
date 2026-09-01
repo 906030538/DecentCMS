@@ -16,9 +16,6 @@ export const LOCALES: { code: Locale; label: string }[] = [
 
 export const DEFAULT_LOCALE: Locale = 'zh-CN';
 
-/** 带路径前缀的非默认语言（[locale] 路由树使用） */
-export const NON_DEFAULT_LOCALES: Locale[] = ['zh-TW', 'en', 'ja'];
-
 const dicts: Record<Locale, Record<MessageKey, string>> = {
   'zh-CN': zhCN,
   'zh-TW': zhTW,
@@ -26,17 +23,11 @@ const dicts: Record<Locale, Record<MessageKey, string>> = {
   ja,
 };
 
-export function normalizeLocale(locale: string | undefined): Locale {
+export function normalizeLocale(locale: string | undefined | null): Locale {
   if (locale && locale in dicts) return locale as Locale;
   return DEFAULT_LOCALE;
 }
 
 export function t(locale: Locale, key: MessageKey): string {
   return dicts[locale][key];
-}
-
-/** 生成带语言前缀的路径（默认语言不带前缀） */
-export function localePath(locale: Locale, path: string): string {
-  const normalized = path.startsWith('/') ? path : `/${path}`;
-  return locale === DEFAULT_LOCALE ? normalized : `/${locale}${normalized}`;
 }

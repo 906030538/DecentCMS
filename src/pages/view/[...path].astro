@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Pagination from '@/components/Pagination.astro';
-import { normalizeLocale, t } from '@/i18n';
+import { DEFAULT_LOCALE, t } from '@/i18n';
 import mockIndex from '../../../public/mock/index.json';
 
-const locale = normalizeLocale(Astro.currentLocale);
+const locale = DEFAULT_LOCALE;
 
 /**
  * 动态路由 /view/:name/:repo 与 /view/:name/:repo/:slug，由客户端按段数区分：
@@ -22,48 +22,6 @@ export function getStaticPaths() {
 const segments = (Astro.params.path ?? '').split('/').filter(Boolean);
 const [userName, repoName, slug] = segments;
 const isDetail = segments.length >= 3;
-
-const cardLabels = {
-  paramsWith: t(locale, 'params.with'),
-  paramsTuned: t(locale, 'params.tuned'),
-  paramsNone: t(locale, 'params.none'),
-};
-
-const collectionLabels = {
-  ...cardLabels,
-  submit: t(locale, 'collection.submit'),
-  edit: t(locale, 'collection.edit'),
-  delete: t(locale, 'collection.delete'),
-  save: t(locale, 'collection.save'),
-  cancel: t(locale, 'common.cancel'),
-  deleteConfirmText: t(locale, 'collection.deleteConfirmText'),
-  license: t(locale, 'label.license'),
-  stars: t(locale, 'label.stars'),
-  user: t(locale, 'label.user'),
-};
-
-const detailLabels = {
-  ...cardLabels,
-  date: t(locale, 'label.date'),
-  tracks: t(locale, 'label.tracks'),
-  engines: t(locale, 'label.engines'),
-  voicebanks: t(locale, 'label.voicebanks'),
-  songLanguages: t(locale, 'label.songLanguages'),
-  media: t(locale, 'detail.media'),
-  files: t(locale, 'detail.files'),
-  release: t(locale, 'detail.release'),
-  comments: t(locale, 'detail.comments'),
-  download: t(locale, 'detail.download'),
-  decrypt: t(locale, 'detail.decrypt'),
-  password: t(locale, 'detail.password'),
-  encrypted: t(locale, 'detail.encrypted'),
-  compressed: t(locale, 'detail.compressed'),
-  attachments: t(locale, 'detail.attachments'),
-  interactions: t(locale, 'detail.interactions'),
-  loadError: t(locale, 'detail.loadError'),
-  license: t(locale, 'label.license'),
-  stars: t(locale, 'label.stars'),
-};
 ---
 
 <BaseLayout title={isDetail ? `${slug} · ${repoName}` : repoName ?? ''}>
@@ -84,7 +42,9 @@ const detailLabels = {
         <div class="mt-6 flex flex-wrap gap-2" data-role="tags"></div>
 
         <section class="mt-8">
-          <h2 class="mb-3 text-lg font-semibold">{t(locale, 'detail.media')}</h2>
+          <h2 class="mb-3 text-lg font-semibold" data-i18n="detail.media">
+            {t(locale, 'detail.media')}
+          </h2>
           <div data-role="media"></div>
         </section>
 
@@ -95,17 +55,23 @@ const detailLabels = {
         </section>
 
         <section class="mt-8">
-          <h2 class="mb-3 text-lg font-semibold">{t(locale, 'detail.files')}</h2>
+          <h2 class="mb-3 text-lg font-semibold" data-i18n="detail.files">
+            {t(locale, 'detail.files')}
+          </h2>
           <div data-role="files"></div>
         </section>
 
         <section class="mt-8">
-          <h2 class="mb-3 text-lg font-semibold">{t(locale, 'detail.release')}</h2>
+          <h2 class="mb-3 text-lg font-semibold" data-i18n="detail.release">
+            {t(locale, 'detail.release')}
+          </h2>
           <div data-role="release"></div>
         </section>
 
         <section class="mt-8">
-          <h2 class="mb-3 text-lg font-semibold">{t(locale, 'detail.comments')}</h2>
+          <h2 class="mb-3 text-lg font-semibold" data-i18n="detail.comments">
+            {t(locale, 'detail.comments')}
+          </h2>
           <div data-role="issues"></div>
         </section>
       </article>
@@ -120,21 +86,26 @@ const detailLabels = {
             <div class="ml-auto flex gap-2" data-role="actions"></div>
           </div>
           <p class="mt-1 text-sm text-slate-500 dark:text-slate-400" data-role="repo-meta">
-            {t(locale, 'label.user')}: {userName}
+            <span data-i18n="label.user">{t(locale, 'label.user')}</span>: {userName}
           </p>
         </header>
 
         <div class="mb-4 flex gap-2" data-role="tabs">
-          <button type="button" class="btn btn-primary" data-tab="project">
+          <button type="button" class="btn btn-primary" data-tab="project" data-i18n="type.project">
             {t(locale, 'type.project')}
           </button>
-          <button type="button" class="btn" data-tab="article">
+          <button type="button" class="btn" data-tab="article" data-i18n="type.article">
             {t(locale, 'type.article')}
           </button>
         </div>
 
         <div class="flex flex-col gap-3" data-component="list"></div>
-        <p class="py-8 text-center text-slate-400" data-role="empty" hidden>
+        <p
+          class="py-8 text-center text-slate-400"
+          data-role="empty"
+          data-i18n="common.noResults"
+          hidden
+        >
           {t(locale, 'common.noResults')}
         </p>
         <Pagination locale={locale} />
@@ -148,23 +119,21 @@ const detailLabels = {
     slug: slug ?? null,
     isDetail,
   })} />
-  <script is:inline type="application/json" id="collection-labels" set:html={JSON.stringify(collectionLabels)} />
-  <script is:inline type="application/json" id="detail-labels" set:html={JSON.stringify(detailLabels)} />
 
   <script>
-    import { initCollection, type CollectionLabels } from '@/lib/views/collection';
-    import { initDetail, type DetailLabels } from '@/lib/views/detail';
+    import { initCollection } from '@/lib/views/collection';
+    import { initDetail } from '@/lib/views/detail';
+    import { buildCollectionLabels, buildDetailLabels } from '@/lib/labels';
+    import { getClientLocale } from '@/lib/i18n-client';
 
     const config = JSON.parse(
       document.getElementById('view-config')!.textContent!,
     ) as { user: string; repo: string; slug: string | null; isDetail: boolean };
-    const locale = document.documentElement.lang;
+    const locale = getClientLocale();
 
     try {
       if (config.isDetail && config.slug) {
-        const labels = JSON.parse(
-          document.getElementById('detail-labels')!.textContent!,
-        ) as DetailLabels;
+        const labels = buildDetailLabels(locale);
         const pick = (role: string) =>
           document.querySelector<HTMLElement>(`[data-role="${role}"]`)!;
         await initDetail({
@@ -187,9 +156,7 @@ const detailLabels = {
           },
         });
       } else {
-        const labels = JSON.parse(
-          document.getElementById('collection-labels')!.textContent!,
-        ) as CollectionLabels;
+        const labels = buildCollectionLabels(locale);
         await initCollection({
           user: config.user,
           repo: config.repo,

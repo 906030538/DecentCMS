@@ -3,16 +3,19 @@ import '@/styles/global.css';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import { SITE_NAME } from '@/config';
-import { normalizeLocale } from '@/i18n';
-import type { Locale } from '@/i18n';
+import { DEFAULT_LOCALE, t } from '@/i18n';
+import type { MessageKey } from '@/i18n';
 
 interface Props {
   title?: string;
+  /** 纯文案标题：随语言偏好由客户端重译 */
+  titleKey?: MessageKey;
 }
 
-const { title } = Astro.props;
-const locale: Locale = normalizeLocale(Astro.currentLocale);
-const pageTitle = title ? `${title} - ${SITE_NAME}` : SITE_NAME;
+const { title, titleKey } = Astro.props;
+const locale = DEFAULT_LOCALE;
+const baseTitle = titleKey ? t(locale, titleKey) : title;
+const pageTitle = baseTitle ? `${baseTitle} - ${SITE_NAME}` : SITE_NAME;
 ---
 
 <!doctype html>
@@ -22,7 +25,7 @@ const pageTitle = title ? `${title} - ${SITE_NAME}` : SITE_NAME;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{pageTitle}</title>
+    <title data-i18n={titleKey}>{pageTitle}</title>
     <!-- 首屏前应用主题，避免闪烁：默认白色，跟随系统深色自动切换，用户选择优先 -->
     <script is:inline>
       (function () {
@@ -39,8 +42,15 @@ const pageTitle = title ? `${title} - ${SITE_NAME}` : SITE_NAME;
                 document.documentElement.classList.toggle('dark', e.matches);
               }
             });
+          // 语言偏好不体现在路由中：首屏前同步 <html lang>
+          var lang = localStorage.getItem('svp-locale');
+          if (lang) document.documentElement.lang = lang;
         } catch (e) {}
       })();
+    </script>
+    <script>
+      import { applyClientLocale } from '@/lib/i18n-client';
+      applyClientLocale();
     </script>
   </head>
   <body class="flex min-h-screen flex-col">

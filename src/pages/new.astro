@@ -1,35 +1,22 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { buildEditorLabels, buildLicenseOptions } from '@/lib/editor/labels';
-import { normalizeLocale, t } from '@/i18n';
-
-const locale = normalizeLocale(Astro.currentLocale);
-
-const editorConfig = {
-  mode: 'new',
-  licenseOptions: buildLicenseOptions(locale),
-};
-const editorLabels = buildEditorLabels(locale);
+import { DEFAULT_LOCALE, t } from '@/i18n';
 ---
 
-<BaseLayout title={t(locale, 'new.title')}>
-  <h1 class="mb-6 text-2xl font-bold">{t(locale, 'new.title')}</h1>
+<BaseLayout titleKey="new.title">
+  <h1 class="mb-6 text-2xl font-bold" data-i18n="new.title">{t(DEFAULT_LOCALE, 'new.title')}</h1>
 
   <div data-role="editor-root"></div>
 
-  <script is:inline type="application/json" id="editor-config" set:html={JSON.stringify(editorConfig)} />
-  <script is:inline type="application/json" id="editor-labels" set:html={JSON.stringify(editorLabels)} />
-
   <script>
-    import { initEditor, type EditorConfig, type EditorLabels } from '@/lib/views/editor';
+    import { initEditor, type EditorConfig } from '@/lib/views/editor';
+    import { buildEditorLabels, buildLicenseOptions } from '@/lib/labels';
+    import { getClientLocale } from '@/lib/i18n-client';
 
     try {
-      const config = JSON.parse(
-        document.getElementById('editor-config')!.textContent!,
-      ) as EditorConfig;
-      const labels = JSON.parse(
-        document.getElementById('editor-labels')!.textContent!,
-      ) as EditorLabels;
+      const locale = getClientLocale();
+      const config: EditorConfig = { mode: 'new', licenseOptions: buildLicenseOptions(locale) };
+      const labels = buildEditorLabels(locale);
       await initEditor(config, labels, document.querySelector('[data-role="editor-root"]')!);
     } catch (error) {
       console.error('[editor] init failed:', error);

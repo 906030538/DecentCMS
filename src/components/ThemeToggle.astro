@@ -9,10 +9,15 @@ interface Props {
 const { locale } = Astro.props;
 ---
 
-<select id="theme-switcher" class="input h-8 px-2 text-xs" aria-label={t(locale, 'theme.label')}>
-  <option value="auto">{t(locale, 'theme.auto')}</option>
-  <option value="light">{t(locale, 'theme.light')}</option>
-  <option value="dark">{t(locale, 'theme.dark')}</option>
+<select
+  id="theme-switcher"
+  class="input h-8 px-2 text-xs"
+  data-i18n-aria="theme.label"
+  aria-label={t(locale, 'theme.label')}
+>
+  <option value="auto" data-i18n="theme.auto">{t(locale, 'theme.auto')}</option>
+  <option value="light" data-i18n="theme.light">{t(locale, 'theme.light')}</option>
+  <option value="dark" data-i18n="theme.dark">{t(locale, 'theme.dark')}</option>
 </select>
 
 <script>

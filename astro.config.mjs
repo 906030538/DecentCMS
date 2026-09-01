@@ -5,14 +5,6 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://sectorvault.example.com',
-  i18n: {
-    defaultLocale: 'zh-CN',
-    locales: ['zh-CN', 'zh-TW', 'en', 'ja'],
-    routing: {
-      prefixDefaultLocale: false,
-      redirectToDefaultLocale: false,
-    },
-  },
   vite: {
     plugins: [
       tailwindcss(),
