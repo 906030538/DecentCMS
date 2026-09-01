@@ -3,7 +3,7 @@ import { getAdapterAsync } from '@/lib/adapters/lazy';
 import { isMockAvailable, loadEngagements, loadRepoInfo } from '@/lib/content';
 import { iterateAllSubmissions, loadMockIndex } from '@/lib/index/loader';
 import { loadSession } from '@/lib/auth';
-import { renderCard, localePrefix, type CardLabels } from '@/lib/ui';
+import { renderCard, type CardLabels } from '@/lib/ui';
 import type { Platform, RepoInfo, SubmissionEntry } from '@/types';
 
 export interface CollectionLabels extends CardLabels {
@@ -152,7 +152,6 @@ function openDeleteDialog(labels: CollectionLabels, repo: string): void {
 
 export async function initCollection(init: CollectionInit): Promise<void> {
   const { user, repo, locale, labels, els } = init;
-  const prefix = localePrefix(locale);
   const session = loadSession();
   const isOwner = session?.login === user;
 
@@ -174,7 +173,7 @@ export async function initCollection(init: CollectionInit): Promise<void> {
     els.actions.textContent = '';
     if (!isOwner) return;
     const submit = document.createElement('a');
-    submit.href = `${prefix}/new`;
+    submit.href = '/new';
     submit.className = 'btn btn-primary';
     submit.dataset.action = 'submit';
     submit.textContent = labels.submit;

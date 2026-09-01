@@ -22,7 +22,6 @@ import {
   type SubmissionDraft,
 } from '@/lib/editor/pipeline';
 import { findEntry, loadMockIndex } from '@/lib/index/loader';
-import { localePrefix } from '@/lib/ui';
 import type { ParamStatus, Platform, ReleaseAsset, SubmissionEntry, SubmissionType } from '@/types';
 
 export interface EditorLabels {
@@ -620,16 +619,15 @@ function makeOnStep(progress: HTMLElement, labels: EditorLabels): { onStep: OnSt
 }
 
 function renderDone(root: HTMLElement, labels: EditorLabels, config: EditorConfig, mode: 'new' | 'edit'): void {
-  const prefix = localePrefix(document.documentElement.lang);
   const panel = el('div', 'card flex flex-col gap-3 p-6');
   panel.setAttribute('data-role', 'done');
   panel.appendChild(el('h2', 'text-lg font-semibold', mode === 'new' ? labels.doneNew : labels.doneEdit));
   const links = el('div', 'flex gap-2');
   const collection = el('a', 'btn', labels.gotoCollection);
-  collection.href = `${prefix}/view/${config.user}/${config.repo}`;
+  collection.href = `/view/${config.user}/${config.repo}`;
   collection.setAttribute('data-action', 'goto-collection');
   const submission = el('a', 'btn btn-primary', labels.gotoSubmission);
-  submission.href = `${prefix}/view/${config.user}/${config.repo}/${config.slug}`;
+  submission.href = `/view/${config.user}/${config.repo}/${config.slug}`;
   submission.setAttribute('data-action', 'goto-submission');
   links.append(collection, submission);
   panel.appendChild(links);
@@ -682,7 +680,6 @@ export async function initEditor(
   labels: EditorLabels,
   root: HTMLElement,
 ): Promise<void> {
-  const locale = document.documentElement.lang;
   const mock = await isMockAvailable();
 
   root.textContent = '';
@@ -1087,7 +1084,7 @@ export async function initEditor(
         };
         await updateSubmission(draft, ctx, token, mock, onStep);
       } else {
-        await publishSubmission(draft, token, mock, locale, onStep);
+        await publishSubmission(draft, token, mock, onStep);
       }
       config.user = draft.user;
       config.repo = draft.repo;

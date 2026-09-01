@@ -12,7 +12,6 @@ import {
   type ProjectFile,
 } from '@/lib/content';
 import { findEntry } from '@/lib/index/loader';
-import { localePrefix } from '@/lib/ui';
 import type { IssueInfo, Platform, ReleaseInfo, SubmissionEntry } from '@/types';
 
 export interface DetailLabels {
@@ -414,7 +413,6 @@ function renderAuthor(
   els: DetailElements,
 ): void {
   els.author.textContent = '';
-  const prefix = localePrefix(document.documentElement.lang);
 
   const avatar = document.createElement('div');
   avatar.className =
@@ -425,7 +423,7 @@ function renderAuthor(
   info.className = 'flex flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-sm';
 
   const userLink = document.createElement('a');
-  userLink.href = `${prefix}/user/${entry.user}`;
+  userLink.href = `/user/${entry.user}`;
   userLink.className = 'font-medium hover:text-indigo-600 dark:hover:text-indigo-400';
   userLink.textContent = entry.user;
   info.appendChild(userLink);

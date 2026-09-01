@@ -2,6 +2,13 @@
 // 前置：npm run build && npm run preview（4321 端口）
 import { Browser } from 'happy-dom';
 
+// 演示登录后页面 reload 与 browser.close() 存在竞态，忽略因此被中止的 fetch
+process.on('unhandledRejection', (reason) => {
+  const msg = String(reason?.message ?? reason);
+  if (/aborted|NetworkError/i.test(msg)) return;
+  throw reason;
+});
+
 const BASE = 'http://localhost:4321';
 let failed = 0;
 

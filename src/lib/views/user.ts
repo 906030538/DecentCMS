@@ -10,7 +10,6 @@ import { getAdapterAsync } from '@/lib/adapters/lazy';
 import { getToken, loadSession } from '@/lib/auth';
 import { isMockAvailable, loadAbout, loadRepoInfo } from '@/lib/content';
 import { iterateAllSubmissions, loadActiveIndex, loadMockIndex } from '@/lib/index/loader';
-import { localePrefix } from '@/lib/ui';
 import type { IndexFile, Platform, SubmissionEntry } from '@/types';
 
 export interface UserLabels {
@@ -94,9 +93,8 @@ function formatDate(date: string, locale: string): string {
 }
 
 function miniCard(entry: SubmissionEntry, locale: string): HTMLElement {
-  const prefix = localePrefix(locale);
   const link = el('a', 'card block w-40 shrink-0 overflow-hidden p-0');
-  link.href = `${prefix}/view/${entry.user}/${entry.repo}/${entry.slug}`;
+  link.href = `/view/${entry.user}/${entry.repo}/${entry.slug}`;
   link.dataset.role = 'mini-card';
 
   if (entry.cover?.startsWith('http')) {
@@ -132,19 +130,18 @@ async function renderRepoCollection(
   platform: Platform,
 ): Promise<void> {
   const { name, locale, labels } = init;
-  const prefix = localePrefix(locale);
 
   const card = el('div', 'card flex flex-col gap-3 p-5');
   card.dataset.repo = repo;
 
   const header = el('div', 'flex flex-wrap items-center gap-2');
   const repoLink = el('a', 'font-semibold hover:text-indigo-600 dark:hover:text-indigo-400', repo);
-  repoLink.href = `${prefix}/view/${name}/${repo}`;
+  repoLink.href = `/view/${name}/${repo}`;
   header.appendChild(repoLink);
   const info = await loadRepoInfo(platform, name, repo);
   if (info) header.appendChild(el('span', 'text-sm text-slate-400', `★ ${info.stars}`));
   const more = el('a', 'btn ml-auto', labels.more);
-  more.href = `${prefix}/view/${name}/${repo}`;
+  more.href = `/view/${name}/${repo}`;
   more.dataset.action = 'more';
   header.appendChild(more);
   card.appendChild(header);
@@ -272,8 +269,7 @@ function openCreateDialog(init: UserInit, platform: Platform): void {
 }
 
 export async function initUser(init: UserInit): Promise<void> {
-  const { name, locale, labels, els } = init;
-  const prefix = localePrefix(locale);
+  const { name, labels, els } = init;
   const session = loadSession();
 
   const [index, entries] = await Promise.all([loadIndex(), loadUserEntries(name)]);
@@ -294,7 +290,7 @@ export async function initUser(init: UserInit): Promise<void> {
   if (platforms.length > 1) {
     for (const p of platforms) {
       const chip = el('a', 'chip', p);
-      chip.href = `${prefix}/user/${name}?git=${p}`;
+      chip.href = `/user/${name}?git=${p}`;
       chip.dataset.platform = p;
       if (p === platform) chip.classList.add('font-semibold', 'text-indigo-600', 'dark:text-indigo-400');
       els.platforms.appendChild(chip);

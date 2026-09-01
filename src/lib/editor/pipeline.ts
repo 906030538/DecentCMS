@@ -3,7 +3,6 @@ import { getAdapterAsync } from '@/lib/adapters/lazy';
 import type { FileChange } from '@/lib/adapters/types';
 import { generateReadme, type ProjectFile } from '@/lib/content';
 import { loadActiveIndex, loadMockIndex } from '@/lib/index/loader';
-import { localePrefix } from '@/lib/ui';
 import type {
   IndexFile,
   ParamStatus,
@@ -98,11 +97,10 @@ export function buildReleaseBody(
   user: string,
   repo: string,
   slug: string,
-  locale: string,
   site?: string,
 ): string {
   const lines = [
-    `${window.location.origin}${localePrefix(locale)}/view/${user}/${repo}/${slug}`,
+    `${window.location.origin}/view/${user}/${repo}/${slug}`,
   ];
   if (site) {
     let base = site;
@@ -204,7 +202,6 @@ export async function publishSubmission(
   draft: SubmissionDraft,
   token: string | null,
   mock: boolean,
-  locale: string,
   onStep: OnStep,
 ): Promise<{ issue: number; releaseId: number }> {
   const { user, repo, slug } = draft;
@@ -251,7 +248,7 @@ export async function publishSubmission(
       return;
     }
     const site = await findUserSite(user, mock, draft.platform);
-    releaseId = await (await adapter()).createRelease(token!, user, repo, slug, buildReleaseBody(user, repo, slug, locale, site));
+    releaseId = await (await adapter()).createRelease(token!, user, repo, slug, buildReleaseBody(user, repo, slug, site));
   });
 
   await runStep('assets', mock, onStep, async () => {

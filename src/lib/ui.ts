@@ -15,10 +15,6 @@ export interface CardOptions {
   engagement?: EngagementStats;
 }
 
-export function localePrefix(locale: string): string {
-  return locale === 'zh-CN' ? '' : `/${locale}`;
-}
-
 function chip(text: string): HTMLSpanElement {
   const span = document.createElement('span');
   span.className = 'chip';
@@ -26,19 +22,18 @@ function chip(text: string): HTMLSpanElement {
   return span;
 }
 
-/** 以 DOM API 构建稿件卡片（与 ProjectCard.astro 结构一致，避免 XSS） */
+/** 以 DOM API 构建稿件卡片（避免 XSS） */
 export function renderCard(
   entry: SubmissionEntry,
   locale: string,
   labels: CardLabels,
   opts: CardOptions = {},
 ): HTMLElement {
-  const prefix = localePrefix(locale);
   const article = document.createElement('article');
   article.className = 'card flex gap-4 p-4';
 
   const coverLink = document.createElement('a');
-  coverLink.href = `${prefix}/view/${entry.user}/${entry.repo}/${entry.slug}`;
+  coverLink.href = `/view/${entry.user}/${entry.repo}/${entry.slug}`;
   coverLink.className = 'block w-32 shrink-0';
   if (entry.cover?.startsWith('http')) {
     const img = document.createElement('img');
@@ -69,7 +64,7 @@ export function renderCard(
   const meta = document.createElement('p');
   meta.className = 'mt-1 text-sm text-slate-500 dark:text-slate-400';
   const userLink = document.createElement('a');
-  userLink.href = `${prefix}/user/${entry.user}`;
+  userLink.href = `/user/${entry.user}`;
   userLink.className = 'hover:text-indigo-600 dark:hover:text-indigo-400';
   userLink.textContent = entry.user;
   const date = document.createElement('time');
@@ -119,7 +114,7 @@ export function renderCard(
     const actions = document.createElement('div');
     actions.className = 'mt-2 flex gap-2';
     const editBtn = document.createElement('a');
-    editBtn.href = `${prefix}/edit/${entry.user}/${entry.repo}/${entry.slug}`;
+    editBtn.href = `/edit/${entry.user}/${entry.repo}/${entry.slug}`;
     editBtn.className =
       'rounded-md border border-slate-300 px-2 py-0.5 text-xs hover:border-indigo-500 hover:text-indigo-600 dark:border-slate-600';
     editBtn.dataset.action = 'edit-submission';
